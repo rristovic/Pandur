@@ -1,9 +1,12 @@
 package com.pandurbg.android.util;
 
+import android.content.Context;
+
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.pandurbg.android.db.PandurFirebaseDatabase;
 import com.pandurbg.android.model.Location;
 import com.pandurbg.android.model.Post;
 import com.pandurbg.android.model.PostCategory;
@@ -21,13 +24,14 @@ public class DummyData {
     private static List<User> dummyUsers = new LinkedList<>();
     private static PostCategory postCategory;
 
-    public void pushDummyDataToFirebase(DatabaseReference fb, GeoFire geoFire) {
-        fb.child("posts").setValue(null);
-        fb.child("locations").setValue(null);
+    public void pushDummyDataToFirebase() {
+        PandurFirebaseDatabase.getInstance().getLocationsTable().setValue(null);
+        PandurFirebaseDatabase.getInstance().getPostsTable().setValue(null);
+        GeoFire geoFire = new GeoFire(PandurFirebaseDatabase.getInstance().getLocationsTable());
         for (int i = 0; i < 100; i++) {
-            final DatabaseReference ref = fb.child("posts").push();
+            final DatabaseReference ref = PandurFirebaseDatabase.getInstance().getPostsTable().push();
             final Post p = generatePost(ref.getKey());
-            geoFire.setLocation(ref.getKey(), new GeoLocation(p.getLocation().latitude, p.getLocation().longitude), new GeoFire.CompletionListener() {
+            geoFire.setLocation(ref.getKey(), new GeoLocation(p.getLocation().getLatitude(), p.getLocation().getLongitude()), new GeoFire.CompletionListener() {
                 @Override
                 public void onComplete(String key, DatabaseError error) {
                     ref.setValue(p);
@@ -47,12 +51,12 @@ public class DummyData {
         return p;
     }
 
-    private Location generateLocation(String postId) {
+    public static Location generateLocation(String postId) {
         Location location = new Location(postId, 42 + (Math.random() * ((46 - 42) + 1)), 19.38 + (Math.random() * ((22.16 - 19.38) + 1)));
         return location;
     }
 
-    private User generateUser() {
+    public static User generateUser() {
         if (dummyUsers.size() == 0) {
             for (int i = 0; i < 10; i++) {
                 User u = new User();
@@ -67,7 +71,7 @@ public class DummyData {
         return dummyUsers.get(new Random().nextInt(10));
     }
 
-    private PostCategory generatePostCat() {
+    public static PostCategory generatePostCat() {
         if (postCategory == null) {
             postCategory = new PostCategory();
             postCategory.set_id(0);

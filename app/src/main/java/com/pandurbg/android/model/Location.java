@@ -3,6 +3,8 @@ package com.pandurbg.android.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Locale;
 
 /**
@@ -10,20 +12,20 @@ import java.util.Locale;
  */
 
 public class Location implements Parcelable {
-    public String postId;
-    public double latitude;
-    public double longitude;
+    private double latitude;
+    private String postId;
+    private double longitude;
 
-    public Location(){}
+    public Location() {
+    }
 
     public Location(String postId, double latitude, double longitude) {
-        this.latitude = latitude;
         this.postId = postId;
+        this.latitude = latitude;
         this.longitude = longitude;
     }
 
     protected Location(Parcel in) {
-        postId = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
     }
@@ -35,12 +37,12 @@ public class Location implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(postId);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
     }
 
     @SuppressWarnings("unused")
+    @Exclude
     public static final Parcelable.Creator<Location> CREATOR = new Parcelable.Creator<Location>() {
         @Override
         public Location createFromParcel(Parcel in) {
@@ -52,4 +54,28 @@ public class Location implements Parcelable {
             return new Location[size];
         }
     };
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
 }

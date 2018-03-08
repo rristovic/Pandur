@@ -9,6 +9,7 @@ public class Post {
     private PostCategory category;
     private Location location;
     private String description;
+    private String street;
     private String time;
     private User user;
 
@@ -61,5 +62,13 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
     }
 }
