@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 PostRepository.getInstance(MainActivity.this).
-                        addNewPost(DummyData.generatePostCat(), "Lorem Ipsum", "Lorem Ipsum", 44, 21);
+                        addNewPost(DummyData.generatePostCat(), "Novi Post", "Nova Ulica", 44, 21);
             }
         });
     }

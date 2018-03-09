@@ -3,6 +3,7 @@ package com.pandurbg.android.db;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -19,6 +20,8 @@ import com.pandurbg.android.util.DummyData;
 import com.pandurbg.android.util.Utils;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -28,7 +31,8 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class PostRepository {
-    private static final int DEFAULT_RADIUS_KM = 100;
+    private static final double DEFAULT_RADIUS_KM = 10;
+    private static double RADIUS_KM = 0.3;
 
     private static PostRepository mInstance;
     private static Context mContext;
@@ -75,19 +79,19 @@ public class PostRepository {
     public LiveData<List<Post>> getUserFeed(double userLatitude, double userLongitude) {
         if (mUserFeed == null) {
             mUserFeed = new MutableLiveData<>();
+            getLatestFeed(new LinkedHashMap<String, Location>(100), userLatitude, userLongitude);
         }
-        getLatestFeed(userLatitude, userLongitude);
         return mUserFeed;
     }
 
-    private void getLatestFeed(double userLatitude, double userLongitude) {
-        final List<Location> locations = new LinkedList<>();
-        GeoQuery geoQuery = mGeoFire.queryAtLocation(new GeoLocation(userLatitude, userLongitude), DEFAULT_RADIUS_KM);
+    private void getLatestFeed(final LinkedHashMap<String, Location> locations, final double userLatitude, final double userLongitude) {
+        final GeoQuery geoQuery = mGeoFire.queryAtLocation(new GeoLocation(userLatitude, userLongitude), RADIUS_KM);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
 
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
-                locations.add(new Location(key, location.latitude, location.longitude));
+                Log.d("PostRepo", String.format("Key:%s, Latitude: %f, Longitude: %f", key, location.latitude, location.longitude));
+                locations.put(key, new Location(key, location.latitude, location.longitude));
             }
 
             @Override
@@ -102,7 +106,12 @@ public class PostRepository {
 
             @Override
             public void onGeoQueryReady() {
-                getPostByLocation(locations);
+                if (RADIUS_KM != DEFAULT_RADIUS_KM) {
+                    RADIUS_KM++;
+                    geoQuery.setRadius(RADIUS_KM);
+                } else {
+                    getPostByLocation(locations);
+                }
             }
 
             @Override
@@ -112,9 +121,13 @@ public class PostRepository {
         });
     }
 
-    private void getPostByLocation(final List<Location> locations) {
+    private void getPostByLocation(final LinkedHashMap<String, Location> locations) {
         DatabaseReference posts = mDatabase.getPostsTable();
-        final List<Post> userFeed = new LinkedList<>();
+        final LinkedHashMap<String, Post> userFeed = new LinkedHashMap<>(locations.size());
+        for (String key :
+                locations.keySet()) {
+            userFeed.put(key, null);
+        }
         final CountDownLatch countDownLatch = new CountDownLatch(locations.size());
         // Start post complete listener
         new Thread(new Runnable() {
@@ -125,19 +138,20 @@ public class PostRepository {
                     try {
                         countDownLatch.await();
                         done = true;
-                        mUserFeed.postValue(userFeed);
+                        mUserFeed.postValue(new ArrayList<Post>(userFeed.values()));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
             }
         }).start();
         ;
-        for (Location location : locations) {
+        for (String key : locations.keySet()) {
             // Get all posts
-            posts.child(location.getPostId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            posts.child(locations.get(key).getPostId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    userFeed.add(dataSnapshot.getValue(Post.class));
+                    Post p = dataSnapshot.getValue(Post.class);
+                    userFeed.put(p.getPostId(), p);
                     countDownLatch.countDown();
                 }
 
