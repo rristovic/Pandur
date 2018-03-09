@@ -28,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class PostRepository {
-    private static final double DEFAULT_RADIUS_KM = 100;
+    private static final double DEFAULT_RADIUS_KM = 10;
     private static double RADIUS_KM = 0.3;
     private static final double DEFAULT_RADIUS_INCREASE = RADIUS_KM;
 

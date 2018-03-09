@@ -28,7 +28,7 @@ public class DummyData {
         PandurFirebaseDatabase.getInstance().getLocationsTable().setValue(null);
         PandurFirebaseDatabase.getInstance().getPostsTable().setValue(null);
         GeoFire geoFire = new GeoFire(PandurFirebaseDatabase.getInstance().getLocationsTable());
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             final DatabaseReference ref = PandurFirebaseDatabase.getInstance().getPostsTable().push();
             final Post p = generatePost(ref.getKey());
             geoFire.setLocation(ref.getKey(), new GeoLocation(p.getLocation().getLatitude(), p.getLocation().getLongitude()), new GeoFire.CompletionListener() {
