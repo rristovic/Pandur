@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
 
-import java.util.Locale;
-
 /**
  * Created by Quantox 1 on 3/8/2018.
  */

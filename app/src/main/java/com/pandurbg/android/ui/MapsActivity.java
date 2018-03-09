@@ -1,5 +1,7 @@
 package com.pandurbg.android.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -13,7 +15,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.pandurbg.android.R;
-import com.pandurbg.android.model.Location;
+import com.pandurbg.android.model.Post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private ArrayList<Location> locations;
+    private ArrayList<Post> mPosts;
     List<Marker> markers;
 
     @Override
@@ -32,8 +34,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        locations = getIntent().getParcelableArrayListExtra("data");
-        markers = new ArrayList<>(locations.size());
+        mPosts = getIntent().getParcelableArrayListExtra("data");
+        markers = new ArrayList<>(mPosts.size());
+    }
+
+    public static void startActivity(Context context, ArrayList<Post> posts) {
+        Intent i = new Intent(context, MapsActivity.class);
+        i.putParcelableArrayListExtra("data", posts);
+        context.startActivity(i);
     }
 
 
@@ -55,17 +63,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void showMapMarkers() {
         mMap.clear();
 
-        if (locations.size() == 0) {
+        if (mPosts.size() == 0) {
             return;
         }
 
-        for (Location lo :
-                locations) {
-            LatLng latLng = new LatLng(lo.getLatitude(), lo.getLongitude());
+        for (Post post :
+                mPosts) {
+            LatLng latLng = new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude());
             MarkerOptions mo = new MarkerOptions();
             mo.position(latLng);
             Marker m = mMap.addMarker(mo);
-            m.setTag(lo);
             markers.add(m);
         }
 

@@ -19,11 +19,8 @@ import com.pandurbg.android.model.PostCategory;
 import com.pandurbg.android.util.DummyData;
 import com.pandurbg.android.util.Utils;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -31,21 +28,21 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class PostRepository {
-    private static final double DEFAULT_RADIUS_KM = 10;
+    private static final double DEFAULT_RADIUS_KM = 100;
     private static double RADIUS_KM = 0.3;
+    private static final double DEFAULT_RADIUS_INCREASE = RADIUS_KM;
 
     private static PostRepository mInstance;
     private static Context mContext;
     private final GeoFire mGeoFire;
     private final PandurFirebaseDatabase mDatabase;
-    private MutableLiveData<List<Post>> mUserFeed;
+    private MutableLiveData<ArrayList<Post>> mUserFeed;
 
     public static PostRepository getInstance(Context context) {
         if (mInstance == null) {
             synchronized (PostRepository.class) {
                 if (mInstance == null) {
                     mInstance = new PostRepository(context.getApplicationContext());
-
                 }
             }
         }
@@ -58,12 +55,13 @@ public class PostRepository {
         mGeoFire = new GeoFire(mDatabase.getLocationsTable());
     }
 
-    public void addNewPost(final PostCategory category, final String postDescription, final String postStreet, double postLatitude, double postLongitude) {
+    public void addNewPost(final PostCategory category, final String postDescription, final String postStreet, final double postLatitude, final double postLongitude) {
         final DatabaseReference ref = PandurFirebaseDatabase.getInstance().getPostsTable().push();
         mGeoFire.setLocation(ref.getKey(), new GeoLocation(postLatitude, postLongitude), new GeoFire.CompletionListener() {
             @Override
             public void onComplete(String key, DatabaseError error) {
                 final Post p = new Post();
+                p.setLocation(new Location(ref.getKey(), postLatitude, postLongitude));
                 p.setUser(DummyData.generateUser());
                 p.setTime(Utils.getCurrentUTCTimeString());
                 p.setPostId(ref.getKey());
@@ -76,7 +74,7 @@ public class PostRepository {
     }
 
 
-    public LiveData<List<Post>> getUserFeed(double userLatitude, double userLongitude) {
+    public LiveData<ArrayList<Post>> getUserFeed(double userLatitude, double userLongitude) {
         if (mUserFeed == null) {
             mUserFeed = new MutableLiveData<>();
             getLatestFeed(new LinkedHashMap<String, Location>(100), userLatitude, userLongitude);
@@ -106,8 +104,8 @@ public class PostRepository {
 
             @Override
             public void onGeoQueryReady() {
-                if (RADIUS_KM != DEFAULT_RADIUS_KM) {
-                    RADIUS_KM++;
+                if (RADIUS_KM <= DEFAULT_RADIUS_KM) {
+                    RADIUS_KM += DEFAULT_RADIUS_INCREASE;
                     geoQuery.setRadius(RADIUS_KM);
                 } else {
                     getPostByLocation(locations);
