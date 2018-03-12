@@ -33,6 +33,7 @@ public class PandurFirebaseDatabase {
     private PandurFirebaseDatabase() {
         mDatabase = FirebaseDatabase.getInstance();
         mDbReference = mDatabase.getReference(DB_REF_NAME);
+        mDbReference.keepSynced(true);
     }
 
     public DatabaseReference getLocationsTable() {

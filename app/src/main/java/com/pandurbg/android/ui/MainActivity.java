@@ -9,7 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.pandurbg.android.R;
+import com.pandurbg.android.db.PandurFirebaseDatabase;
 import com.pandurbg.android.db.PostRepository;
 import com.pandurbg.android.model.Post;
 import com.pandurbg.android.util.DummyData;
@@ -34,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "Data received, size: " + posts.size());
             }
         });
+        PostRepository.getInstance(this).getNewlyAddedPosts().observe(this, new Observer<Post>() {
+            @Override
+            public void onChanged(@Nullable Post post) {
+                Log.d("NewlyAdded", post.toString());
+            }
+        });
+
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
