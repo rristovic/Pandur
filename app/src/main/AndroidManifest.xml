@@ -39,6 +39,8 @@
         <activity
             android:name=".ui.MapsActivity"
             android:label="@string/title_activity_maps" />
+        <activity android:name=".ui.PostFeedActivity" />
+        <activity android:name=".ui.AddPostActivity"></activity>
     </application>
 
 </manifest>

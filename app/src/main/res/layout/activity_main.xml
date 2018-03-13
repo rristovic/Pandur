@@ -26,4 +26,16 @@
     android:layout_height="wrap_content"
     android:text="Reset db" />
 
+    <Button
+        android:id="@+id/bOpenPostFeed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Open Feed" />
+
+    <Button
+        android:id="@+id/bAddPost"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Post" />
+
 </LinearLayout>

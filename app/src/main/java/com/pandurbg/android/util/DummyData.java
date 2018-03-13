@@ -48,6 +48,7 @@ public class DummyData {
         p.setLocation(generateLocation(postId));
         p.setTime("13/2/2018 12:12:00");
         p.setUser(generateUser());
+        p.setApprovals(4);
         return p;
     }
 

@@ -15,6 +15,9 @@ public class Post implements Parcelable {
     private String street;
     private String time;
     private User user;
+    private int approvals;
+
+
 
     public Post() {
     }
@@ -75,6 +78,14 @@ public class Post implements Parcelable {
         this.street = street;
     }
 
+    public int getApprovals() {
+        return approvals;
+    }
+
+    public void setApprovals(int approvals) {
+        this.approvals = approvals;
+    }
+
     protected Post(Parcel in) {
         postId = in.readString();
         category = (PostCategory) in.readValue(PostCategory.class.getClassLoader());
@@ -83,6 +94,7 @@ public class Post implements Parcelable {
         street = in.readString();
         time = in.readString();
         user = (User) in.readValue(User.class.getClassLoader());
+        approvals = in.readInt();
     }
 
     @Override
@@ -99,6 +111,7 @@ public class Post implements Parcelable {
         dest.writeString(street);
         dest.writeString(time);
         dest.writeValue(user);
+        dest.writeInt(approvals);
     }
 
     @SuppressWarnings("unused")

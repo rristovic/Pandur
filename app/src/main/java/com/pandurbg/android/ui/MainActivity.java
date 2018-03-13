@@ -1,6 +1,7 @@
 package com.pandurbg.android.ui;
 
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btnSend = findViewById(R.id.btn_send);
+
         PostRepository.getInstance(this).getUserFeed(44, 21).observe(this, new Observer<ArrayList<Post>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Post> posts) {
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "Data received, size: " + posts.size());
             }
         });
+
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +61,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 DummyData d = new DummyData();
                 d.pushDummyDataToFirebase();
+            }
+        });
+
+        findViewById(R.id.bAddPost).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this , AddPostActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
+        findViewById(R.id.bOpenPostFeed).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mPosts!=null)
+                    PostFeedActivity.startActivity(MainActivity.this, mPosts);
             }
         });
     }

@@ -149,8 +149,10 @@ public class PostRepository {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Post p = dataSnapshot.getValue(Post.class);
-                    userFeed.put(p.getPostId(), p);
-                    countDownLatch.countDown();
+                    if(p != null) {
+                        userFeed.put(p.getPostId(), p);
+                        countDownLatch.countDown();
+                    }
                 }
 
                 @Override
