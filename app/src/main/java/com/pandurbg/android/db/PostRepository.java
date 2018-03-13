@@ -9,6 +9,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +38,7 @@ public class PostRepository {
     private final GeoFire mGeoFire;
     private final PandurFirebaseDatabase mDatabase;
     private MutableLiveData<ArrayList<Post>> mUserFeed;
+    private MutableLiveData<Post> mNewlyAdded;
 
     public static PostRepository getInstance(Context context) {
         if (mInstance == null) {
@@ -76,20 +78,33 @@ public class PostRepository {
 
     public LiveData<ArrayList<Post>> getUserFeed(double userLatitude, double userLongitude) {
         if (mUserFeed == null) {
+            mNewlyAdded = new MutableLiveData<>();
             mUserFeed = new MutableLiveData<>();
             getLatestFeed(new LinkedHashMap<String, Location>(100), userLatitude, userLongitude);
         }
         return mUserFeed;
     }
 
+    public LiveData<Post> getNewlyAddedPosts() {
+        if (mNewlyAdded == null) {
+            mNewlyAdded = new MutableLiveData<>();
+        }
+        return mNewlyAdded;
+    }
+
     private void getLatestFeed(final LinkedHashMap<String, Location> locations, final double userLatitude, final double userLongitude) {
         final GeoQuery geoQuery = mGeoFire.queryAtLocation(new GeoLocation(userLatitude, userLongitude), RADIUS_KM);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            private boolean initLoaded = false;
 
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 Log.d("PostRepo", String.format("Key:%s, Latitude: %f, Longitude: %f", key, location.latitude, location.longitude));
-                locations.put(key, new Location(key, location.latitude, location.longitude));
+                if (!initLoaded)
+                    locations.put(key, new Location(key, location.latitude, location.longitude));
+                else {
+                    getOnePost(key);
+                }
             }
 
             @Override
@@ -104,10 +119,12 @@ public class PostRepository {
 
             @Override
             public void onGeoQueryReady() {
+                Log.d("PostRepo", "onGeoQueryReady() called.");
                 if (RADIUS_KM <= DEFAULT_RADIUS_KM) {
                     RADIUS_KM += DEFAULT_RADIUS_INCREASE;
                     geoQuery.setRadius(RADIUS_KM);
                 } else {
+                    initLoaded = true;
                     getPostByLocation(locations);
                 }
             }
@@ -118,6 +135,25 @@ public class PostRepository {
             }
         });
     }
+
+    private void getOnePost(String postId) {
+        mDatabase.getPostsTable().child(postId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post p = dataSnapshot.getValue(Post.class);
+                if (p != null) {
+                    mNewlyAdded.postValue(p);
+                    mDatabase.getPostsTable().child(p.getPostId()).removeEventListener(this);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     private void getPostByLocation(final LinkedHashMap<String, Location> locations) {
         DatabaseReference posts = mDatabase.getPostsTable();
@@ -142,14 +178,15 @@ public class PostRepository {
                     }
             }
         }).start();
-        ;
+
         for (String key : locations.keySet()) {
             // Get all posts
             posts.child(locations.get(key).getPostId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Post p = dataSnapshot.getValue(Post.class);
-                    if(p != null) {
+
+                    if (p != null) {
                         userFeed.put(p.getPostId(), p);
                         countDownLatch.countDown();
                     }
