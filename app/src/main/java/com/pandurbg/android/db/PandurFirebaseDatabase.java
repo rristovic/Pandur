@@ -6,9 +6,7 @@ import com.firebase.geofire.GeoFire;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-/**
- * Created by Quantox 1 on 3/8/2018.
- */
+
 
 public class PandurFirebaseDatabase {
     private static final String DB_REF_NAME = "pandur_db";

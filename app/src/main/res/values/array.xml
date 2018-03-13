@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="categories_array">
+        <item>Police </item>
+        <item>speed_camera </item>
+        <item>road_danger </item>
+    </string-array>
+</resources>
