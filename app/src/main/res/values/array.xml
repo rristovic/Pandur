@@ -3,7 +3,7 @@
 
     <string-array name="categories_array">
         <item>Police </item>
-        <item>speed_camera </item>
-        <item>road_danger </item>
+        <item>Speed camera </item>
+        <item>Road danger </item>
     </string-array>
 </resources>

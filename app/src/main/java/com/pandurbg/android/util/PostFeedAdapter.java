@@ -2,6 +2,7 @@ package com.pandurbg.android.util;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,7 +82,7 @@ public class PostFeedAdapter extends RecyclerView.Adapter<PostFeedAdapter.ViewHo
         holder.mtvUsername.setText(mDataset.get(position).getUser().getUserName());
         holder.mivMap.setBackgroundResource(R.drawable.ic_launcher_background);
         holder.mivCategoryIcon.setBackgroundResource(android.R.drawable.presence_busy);
-
+        Log.d("location:" , mDataset.get(position).getLocation().getLatitude()+ " , " + mDataset.get(position).getLocation().getLongitude());
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -1,6 +1,9 @@
 package com.pandurbg.android.util;
 
 
+import com.pandurbg.android.R;
+import com.pandurbg.android.model.PostCategory;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,4 +20,7 @@ public class Utils {
         df.setTimeZone(tz);
         return df.format(new Date());
     }
+
+
+
 }
