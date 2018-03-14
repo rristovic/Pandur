@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Pandur</string>
     <string name="title_activity_maps">Map</string>
+    <string name="failed_login">Neuspelo logovanje u sistem.</string>
+    <string name="register_failure">Greska pri registrovanju.</string>
+    <string name="register_success">Uspesno ste se registrovali.</string>
 </resources>

@@ -6,19 +6,18 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.pandurbg.android.R;
-import com.pandurbg.android.db.PandurFirebaseDatabase;
 import com.pandurbg.android.db.PostRepository;
 import com.pandurbg.android.model.Post;
+import com.pandurbg.android.model.User;
 import com.pandurbg.android.util.DummyData;
+import com.pandurbg.android.util.UserCredentials;
 
 import java.util.ArrayList;
 
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bAddPost).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this , AddPostActivity.class);
+                Intent intent = new Intent(MainActivity.this, AddPostActivity.class);
                 startActivity(intent);
 
             }
@@ -88,9 +87,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bOpenPostFeed).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mPosts!=null)
+                if (mPosts != null)
                     PostFeedActivity.startActivity(MainActivity.this, mPosts);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_logout) {
+            new UserCredentials().logout();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

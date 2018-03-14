@@ -1,6 +1,9 @@
 package com.pandurbg.android.util;
 
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.pandurbg.android.R;
 import com.pandurbg.android.model.PostCategory;
 
@@ -21,6 +24,9 @@ public class Utils {
         return df.format(new Date());
     }
 
+    public static void showToast(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+    }
 
 
 }
