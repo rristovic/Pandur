@@ -95,8 +95,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_logout) {
+        if (item.getItemId() == R.id.action_logout) {
             new UserCredentials().logout();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

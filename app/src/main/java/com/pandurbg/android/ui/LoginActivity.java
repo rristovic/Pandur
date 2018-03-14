@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Intent i = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(i);
+                    finish();
                 } else {
                     Utils.showToast(LoginActivity.this, getString(R.string.failed_login));
                 }
