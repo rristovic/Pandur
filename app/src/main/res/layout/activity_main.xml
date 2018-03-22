@@ -1,41 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.pandurbg.android.ui.MainActivity">
+    tools:context="com.pandurbg.android.ui.MainActivity.MainActivity">
 
-
-    <Button
-        android:id="@+id/btn_send"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="send" />
+        android:layout_height="match_parent"
+        tools:context="com.pandurbg.android.ui.MapsActivity" />
 
-    <Button
-        android:id="@+id/btn_view_locations"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Map" />
-
-    <Button
-    android:id="@+id/btn_reset_db"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Reset db" />
-
-    <Button
-        android:id="@+id/bOpenPostFeed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Open Feed" />
-
-    <Button
-        android:id="@+id/bAddPost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Post" />
-
-</LinearLayout>
+</RelativeLayout>
