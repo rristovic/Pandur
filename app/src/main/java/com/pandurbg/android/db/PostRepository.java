@@ -19,9 +19,7 @@ import com.pandurbg.android.model.PostCategory;
 import com.pandurbg.android.util.DummyData;
 import com.pandurbg.android.util.Utils;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -29,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
  */
 
 public class PostRepository {
-    private static final double DEFAULT_RADIUS_KM = 10;
+    private static final double DEFAULT_RADIUS_KM = 15;
     private static double RADIUS_KM = 0.3;
     private static final double DEFAULT_RADIUS_INCREASE = RADIUS_KM;
 
@@ -39,6 +37,8 @@ public class PostRepository {
     private final PandurFirebaseDatabase mDatabase;
     private MutableLiveData<Post> mUserFeed;
     private MutableLiveData<Post> mNewlyAdded;
+    private GeoQuery mGeoQuery;
+    private GeoQueryEventListener mGeoQueryEventListener;
 
     public static PostRepository getInstance(Context context) {
         if (mInstance == null) {
@@ -76,62 +76,21 @@ public class PostRepository {
     }
 
 
-    public LiveData<Post> getUserFeed(double userLatitude, double userLongitude) {
+    public LiveData<Post> getUserFeed() {
         if (mUserFeed == null) {
             mNewlyAdded = new MutableLiveData<>();
             mUserFeed = new MutableLiveData<>();
-            getLatestFeed(userLatitude, userLongitude);
         }
         return mUserFeed;
     }
 
-    public void onLocationUpdate(long latitude, long longitude) {
-
-    }
-
-    public LiveData<Post> getNewlyAddedPosts() {
-        if (mNewlyAdded == null) {
-            mNewlyAdded = new MutableLiveData<>();
-        }
-        return mNewlyAdded;
+    public void setInitCoordinates(double userLatitude, double userLongitude) {
+        getLatestFeed(userLatitude, userLongitude);
     }
 
     private void getLatestFeed(final double userLatitude, final double userLongitude) {
-        final LinkedHashMap<String, Location> locations = new LinkedHashMap<>(100);
-        final GeoQuery geoQuery = mGeoFire.queryAtLocation(new GeoLocation(userLatitude, userLongitude), RADIUS_KM);
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            private boolean initLoaded = false;
-
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                Log.d("PostRepo", String.format("Key:%s, Latitude: %f, Longitude: %f", key, location.latitude, location.longitude));
-                getPostData(key);
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                Log.d("PostRepo", "onGeoQueryReady() called.");
-                if (RADIUS_KM <= DEFAULT_RADIUS_KM) {
-                    RADIUS_KM += DEFAULT_RADIUS_INCREASE;
-                    geoQuery.setRadius(RADIUS_KM);
-                }
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
+        mGeoQuery = mGeoFire.queryAtLocation(new GeoLocation(userLatitude, userLongitude), DEFAULT_RADIUS_KM);
+        mGeoQuery.addGeoQueryEventListener(getGeoQueryListener());
     }
 
     private void getPostData(String postId) {
@@ -140,7 +99,7 @@ public class PostRepository {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Post p = dataSnapshot.getValue(Post.class);
                 if (p != null) {
-                    mUserFeed.postValue(p);
+                    mUserFeed.setValue(p);
                     mDatabase.getPostsTable().child(p.getPostId()).removeEventListener(this);
                 }
             }
@@ -150,6 +109,11 @@ public class PostRepository {
 
             }
         });
+    }
+
+    public void onLocationUpdate(double latitude, double longitude) {
+        mGeoQuery.removeAllListeners();
+        getLatestFeed(latitude, longitude);
     }
 
 
@@ -197,6 +161,44 @@ public class PostRepository {
             });
         }
 
+    }
+
+    private GeoQueryEventListener getGeoQueryListener() {
+        if(mGeoQueryEventListener == null) {
+            mGeoQueryEventListener = new GeoQueryEventListener() {
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
+                    Log.d("PostRepo", String.format("Key:%s, Latitude: %f, Longitude: %f", key, location.latitude, location.longitude));
+                    getPostData(key);
+                }
+
+                @Override
+                public void onKeyExited(String key) {
+
+                }
+
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+
+                }
+
+                @Override
+                public void onGeoQueryReady() {
+                    Log.d("PostRepo", "onGeoQueryReady() called.");
+//                if (RADIUS_KM <= DEFAULT_RADIUS_KM) {
+//                    RADIUS_KM += DEFAULT_RADIUS_INCREASE;
+//                    mGeoQuery.setRadius(RADIUS_KM);
+//                }
+                }
+
+                @Override
+                public void onGeoQueryError(DatabaseError error) {
+
+                }
+            };
+        }
+
+        return mGeoQueryEventListener;
     }
 
 

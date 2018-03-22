@@ -33,7 +33,7 @@ public class AppExecutor {
     public void executeQueue() {
         for (Runnable r :
                 taskQueue) {
-            runTask(r);
+            runOnUI(r);
         }
     }
 }

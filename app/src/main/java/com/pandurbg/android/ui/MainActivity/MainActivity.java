@@ -74,6 +74,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        mMainViewModel.getUserFeed()
+                .observe(MainActivity.this, new Observer<Post>() {
+                    @Override
+                    public void onChanged(@Nullable Post newPost) {
+                        if (newPost != null)
+                            addMapMarker(newPost);
+                    }
+                });
     }
 
     @Override
@@ -165,14 +174,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (locationResult != null) {
                             moveCamToCurrentLocation(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
                             init = false;
-                            mMainViewModel.getUserFeed(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude())
-                                    .observe(MainActivity.this, new Observer<Post>() {
-                                        @Override
-                                        public void onChanged(@Nullable Post newPost) {
-                                            if (newPost != null)
-                                                addMapMarker(newPost);
-                                        }
-                                    });
+                            mMainViewModel.setInitialCoordinates(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
                         }
                     } else {
                         mMainViewModel.onLocationUpdate(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude());
@@ -241,22 +243,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
-            new UserCredentials().logout();
-            Intent i = new Intent(this, LoginActivity.class);
-            startActivity(i);
-            finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
     private void addMapMarker(@NonNull final Post post) {
         LatLng latLng = new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude());
@@ -291,14 +277,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mTaskExecutor.enqueue(new Runnable() {
                 @Override
                 public void run() {
-                    AppExecutor.runOnUI(new Runnable() {
-                        @Override
-                        public void run() {
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), DEFAULT_MAP_ZOOM));
-                        }
-                    });
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), DEFAULT_MAP_ZOOM));
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            new UserCredentials().logout();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 }

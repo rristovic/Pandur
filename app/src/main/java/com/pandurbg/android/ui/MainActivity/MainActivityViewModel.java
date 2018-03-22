@@ -25,14 +25,18 @@ public class MainActivityViewModel extends AndroidViewModel {
         mRepo = PostRepository.getInstance(application);
     }
 
-    public LiveData<Post> getUserFeed(double latitude, double longitude) {
+    public LiveData<Post> getUserFeed() {
         if (mUserFeed == null) {
-            mUserFeed = mRepo.getUserFeed(latitude, longitude);
+            mUserFeed = mRepo.getUserFeed();
         }
         return mUserFeed;
     }
 
-    public void onLocationUpdate(double latitude, double longitude) {
+    public void setInitialCoordinates(double latitude, double longitude) {
+        mRepo.setInitCoordinates(latitude, longitude);
+    }
 
+    public void onLocationUpdate(double latitude, double longitude) {
+        mRepo.onLocationUpdate(latitude, longitude);
     }
 }
