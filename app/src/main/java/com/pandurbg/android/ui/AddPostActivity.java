@@ -12,13 +12,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import com.pandurbg.android.R;
 import com.pandurbg.android.db.PostRepository;
-import com.pandurbg.android.model.Location;
-import com.pandurbg.android.model.Post;
 import com.pandurbg.android.model.PostCategory;
-import com.pandurbg.android.model.User;
-import com.pandurbg.android.util.DummyData;
 
-import java.util.ArrayList;
 
 public class AddPostActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener{
 
@@ -111,13 +106,14 @@ public class AddPostActivity extends AppCompatActivity implements AdapterView.On
                 break;
             case CATEGORY_DANGER:
                 category.set_id(1);
-                category.setName("Danger alert");
+                category.setName("Danger Alert");
                 category.setSlug("danger");
                 break;
             case CATEGORY_CAMERA:
                 category.set_id(2);
-                category.setName("camera Alert");
-                category.setSlug("police");
+                //TODO constant values , used in post feed adapter too, no hardcoding
+                category.setName("Camera Alert");
+                category.setSlug("police_camera");
                 break;
                 default:
                     Log.d("Invalid spinner entry", "Non existing category");

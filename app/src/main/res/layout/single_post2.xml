@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/posts_feed_background"
-    android:backgroundTint="@color/posts_feed_background">
+    android:backgroundTint="@color/posts_feed_background"
+    android:layout_margin="8dp">
 
     <TextView
         android:id="@+id/tvUsername"
@@ -12,8 +13,8 @@
 
 
         android:layout_alignBottom="@+id/ivCategory"
-        android:layout_alignLeft="@+id/ivMap"
-        android:layout_alignStart="@+id/ivMap"
+        android:layout_alignLeft="@+id/postMap"
+        android:layout_alignStart="@+id/postMap"
         android:text="Username" />
 
     <TextView
@@ -29,12 +30,12 @@
 
     <ImageView
         android:id="@+id/ivCategory"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginEnd="28dp"
+        android:layout_width="42dp"
+        android:layout_height="38dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginLeft="300dp"
-        android:layout_marginRight="28dp"
-        android:layout_marginStart="300dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginStart="280dp"
         android:layout_marginTop="12dp"
         android:background="@android:drawable/presence_busy" />
 
@@ -53,7 +54,7 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/ivMap"
+        android:layout_below="@id/postMap"
 
         android:layout_marginLeft="40dp"
         android:layout_marginStart="40dp"
@@ -61,18 +62,19 @@
         android:background="@color/button_background"
         android:foreground="@android:drawable/ic_input_add" />
 
+
+
     <ImageButton
         android:id="@+id/ibMap"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_below="@id/ivMap"
+        android:layout_below="@id/postMap"
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_toRightOf="@id/ibApprove"
         android:adjustViewBounds="false"
         android:background="@color/button_background"
-        android:backgroundTint="@color/button_background"
         android:foreground="@drawable/marker_icon" />
 
     <TextView
@@ -81,13 +83,7 @@
         android:layout_height="15dp"
         android:layout_above="@+id/tvApprovals"
         android:layout_alignLeft="@+id/tvApprovals"
-        android:layout_below="@id/ivMap"
-        android:layout_marginEnd="96dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="96dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@id/ibMap"
+        android:layout_alignStart="@+id/tvApprovals"
         android:text="9:45" />
 
     <TextView
@@ -96,21 +92,27 @@
         android:layout_height="wrap_content"
 
         android:layout_alignBottom="@+id/ibMap"
-        android:layout_alignEnd="@+id/ivMap"
-        android:layout_alignRight="@+id/ivMap"
+        android:layout_alignEnd="@+id/postMap"
+        android:layout_alignRight="@+id/postMap"
         android:layout_marginEnd="18dp"
         android:layout_marginRight="18dp"
-        android:text="13 potvrda" />
+        android:text="13 approvals" />
 
-    <ImageView
-        android:id="@+id/ivMap"
+
+
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/postMap"
         android:layout_width="312dp"
         android:layout_height="175dp"
         android:layout_alignEnd="@+id/ivCategory"
         android:layout_alignRight="@+id/ivCategory"
         android:layout_below="@+id/tvDescription"
         android:layout_marginTop="20dp"
-        android:background="@drawable/ic_launcher_background" />
+
+     />
+
+
 
 
 </RelativeLayout>

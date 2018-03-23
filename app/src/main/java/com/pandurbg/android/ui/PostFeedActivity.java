@@ -7,14 +7,13 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-
 import com.pandurbg.android.R;
 import com.pandurbg.android.model.Post;
 import com.pandurbg.android.util.PostFeedAdapter;
 
 import java.util.ArrayList;
 
-public class PostFeedActivity extends AppCompatActivity {
+public class PostFeedActivity extends AppCompatActivity  {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -44,7 +43,7 @@ public class PostFeedActivity extends AppCompatActivity {
             mRecyclerView.setAdapter(mAdapter);
         }
         else{
-            Log.d("AdapterError", "null");
+            Log.e("AdapterError", "null");
         }
 
     }
@@ -55,5 +54,6 @@ public class PostFeedActivity extends AppCompatActivity {
         i.putParcelableArrayListExtra("data", posts);
         context.startActivity(i);
     }
+
 
 }
