@@ -68,7 +68,7 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivMap"
+        app:layout_constraintTop_toBottomOf="@+id/postMap"
         app:srcCompat="@android:drawable/ic_input_add"
         android:layout_marginLeft="40dp" />
 
@@ -81,7 +81,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/marker_icon"
         app:layout_constraintStart_toEndOf="@+id/ibApprove"
-        app:layout_constraintTop_toBottomOf="@+id/ivMap" />
+        app:layout_constraintTop_toBottomOf="@+id/postMap" />
 
     <TextView
         android:id="@+id/tvTime"
@@ -94,7 +94,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.941"
         app:layout_constraintStart_toEndOf="@+id/ibMap"
-        app:layout_constraintTop_toBottomOf="@+id/ivMap"
+        app:layout_constraintTop_toBottomOf="@+id/postMap"
         android:layout_marginRight="96dp"
         android:layout_marginLeft="8dp" />
 
@@ -114,7 +114,7 @@
         android:layout_marginLeft="8dp" />
 
     <ImageView
-        android:id="@+id/ivMap"
+        android:id="@+id/postMap"
         android:layout_width="312dp"
         android:layout_height="175dp"
         android:layout_marginEnd="8dp"
