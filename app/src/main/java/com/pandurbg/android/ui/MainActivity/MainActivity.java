@@ -14,8 +14,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -38,10 +40,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.pandurbg.android.R;
 import com.pandurbg.android.model.Post;
+import com.pandurbg.android.network.UserCredentials;
 import com.pandurbg.android.ui.LoginActivity;
 import com.pandurbg.android.util.AppExecutor;
 import com.pandurbg.android.util.Constants;
-import com.pandurbg.android.util.UserCredentials;
 import com.pandurbg.android.util.Utils;
 
 import java.util.LinkedList;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private List<Marker> mMarkers = new LinkedList<>();
     private LocationRequest mLocationRequest;
     private AppExecutor mTaskExecutor;
+    private SupportMapFragment mMapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ButterKnife.bind(this);
         mTaskExecutor = new AppExecutor();
         mMainViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mMapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mMapFragment.getMapAsync(this);
 
         mMainViewModel.getUserFeed()
                 .observe(MainActivity.this, new Observer<Post>() {
@@ -227,6 +230,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        findViewById(R.id.view_click_handler).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("MainActivity", "Map onClickListener.");
+            }
+        });
+        mMap.setOnMapClickListener(getMapClickListener());
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.setOnMarkerClickListener(getMarkerClickListener());
         mTaskExecutor.executeQueue();
     }
 
@@ -298,5 +310,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    GoogleMap.OnMarkerClickListener mMarkerClickListener;
+
+    private GoogleMap.OnMarkerClickListener getMarkerClickListener() {
+        if (mMarkerClickListener == null) {
+            mMarkerClickListener = new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    PostPopupDialog dialog = new PostPopupDialog(MainActivity.this, (Post) marker.getTag());
+                    dialog.show();
+                    return false;
+                }
+            };
+        }
+
+        return mMarkerClickListener;
+    }
+
+    private GoogleMap.OnMapClickListener mMapClickListener;
+
+    private GoogleMap.OnMapClickListener getMapClickListener() {
+        if (mMapClickListener == null) {
+            mMapClickListener = new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    Log.d("MainActivity", "Google onClickListener.");
+                }
+            };
+        }
+
+        return mMapClickListener;
     }
 }

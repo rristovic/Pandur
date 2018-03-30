@@ -11,7 +11,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.pandurbg.android.R;
 import com.pandurbg.android.ui.MainActivity.MainActivity;
-import com.pandurbg.android.util.UserCredentials;
+import com.pandurbg.android.network.UserCredentials;
 import com.pandurbg.android.util.Utils;
 
 import butterknife.BindView;

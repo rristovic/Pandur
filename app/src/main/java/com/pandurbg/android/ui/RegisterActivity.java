@@ -3,15 +3,13 @@ package com.pandurbg.android.ui;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.pandurbg.android.R;
-import com.pandurbg.android.model.User;
-import com.pandurbg.android.util.UserCredentials;
+import com.pandurbg.android.network.UserCredentials;
 import com.pandurbg.android.util.Utils;
 
 import butterknife.BindView;

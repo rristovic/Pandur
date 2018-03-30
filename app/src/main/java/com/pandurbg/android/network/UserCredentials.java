@@ -1,4 +1,4 @@
-package com.pandurbg.android.util;
+package com.pandurbg.android.network;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
